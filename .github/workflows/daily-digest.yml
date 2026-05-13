@@ -1,0 +1,36 @@
+name: AI Vision Daily Digest
+
+on:
+  schedule:
+    # 每天 UTC 0:00 = 北京时间 08:00
+    - cron: "0 0 * * *"
+  # 支持手动触发测试
+  workflow_dispatch:
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create .env from secrets
+        run: |
+          cat > .env << EOF
+          PUSH_CHANNEL=telegram
+          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID=${{ secrets.TELEGRAM_CHANNEL_ID }}
+          LLM_API_KEY=${{ secrets.LLM_API_KEY }}
+          LLM_API_URL=https://api.deepseek.com/v1/chat/completions
+          LLM_MODEL=deepseek-chat
+          EOF
+
+      - name: Run daily digest
+        run: python -m news_digest.main
