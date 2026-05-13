@@ -39,14 +39,16 @@ def build_raw_digest(items: list[NewsItem]) -> str:
 
         label = SOURCE_LABELS.get(source_key, source_key)
         parts.append(f"## {label}\n")
-        for item in group:
-            pub_str = ""
-            if item.published:
-                pub_str = f" ({item.published.strftime('%m-%d')})"
-            parts.append(f"- [{item.title}]({item.url}){pub_str}")
-            if item.summary:
-                parts.append(f"  _{item.summary}_")
-            parts.append("")
+
+        # Only keep the top item per source
+        item = group[0]
+        pub_str = ""
+        if item.published:
+            pub_str = f" ({item.published.strftime('%m-%d')})"
+        parts.append(f"- [{item.title}]({item.url}){pub_str}")
+        if item.summary:
+            parts.append(f"  _{item.summary}_")
+        parts.append("")
         parts.append("")
 
     digest = "\n".join(parts)
