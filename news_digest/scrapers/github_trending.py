@@ -37,7 +37,8 @@ class GitHubTrendingScraper(BaseScraper):
             except Exception:
                 logger.exception("Failed to scrape GitHub trending for %s", lang)
 
-        return items
+        # Keep top 10 across all languages
+        return items[:10]
 
     def _fetch_trending(self, language: str, today: datetime) -> list[NewsItem]:
         url = f"https://github.com/trending/{language}?since=daily"
@@ -81,3 +82,4 @@ class GitHubTrendingScraper(BaseScraper):
     def _is_relevant(description: str, topics: list[str]) -> bool:
         combined = f"{description} {' '.join(topics)}".lower()
         return any(kw in combined for kw in AI_KEYWORDS)
+

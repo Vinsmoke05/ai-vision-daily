@@ -10,6 +10,7 @@ class NewsItem:
     summary: str = ""
     published: datetime | None = None
     tags: list[str] = field(default_factory=list)
+    score: int = 0
 
     @property
     def item_id(self) -> str:

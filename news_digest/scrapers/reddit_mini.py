@@ -22,6 +22,8 @@ AI_KEYWORDS_LOWER = {
     "fine-tuning", "embedding", "vector database",
 }
 
+MAX_ITEMS = 3  # top items per subreddit
+
 
 class RedditScraper(BaseScraper):
     @property
@@ -68,7 +70,7 @@ class RedditScraper(BaseScraper):
             combined = f"{title} {selftext}".lower()
             if not any(kw in combined for kw in AI_KEYWORDS_LOWER):
                 continue
-            if score < 5:
+            if score < 20:
                 continue
 
             items.append(NewsItem(
@@ -78,7 +80,11 @@ class RedditScraper(BaseScraper):
                 summary=(selftext[:300] if selftext else title)[:300],
                 published=datetime.fromtimestamp(created, tz=timezone.utc) if created else None,
                 tags=[subreddit],
+                score=score,
             ))
 
-        logger.info("Reddit r/%s: %d relevant items (filtered from %d)", subreddit, len(items), len(children))
-        return items
+        # Return top N highest-scored items
+        items.sort(key=lambda x: getattr(x, "score", 0), reverse=True)
+        top = items[:MAX_ITEMS]
+        logger.info("Reddit r/%s: %d relevant items, top %d returned", subreddit, len(items), len(top))
+        return top

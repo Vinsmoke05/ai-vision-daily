@@ -31,12 +31,12 @@ class AnthropicScraper(BaseScraper):
         items: list[NewsItem] = []
 
         try:
-            items.extend(self._fetch_news())
+            items.extend(self._fetch_news()[:8])
         except Exception:
             logger.exception("Failed to scrape Anthropic news")
 
         try:
-            items.extend(self._fetch_release_notes())
+            items.extend(self._fetch_release_notes()[:3])
         except Exception:
             logger.exception("Failed to scrape Anthropic release notes")
 
