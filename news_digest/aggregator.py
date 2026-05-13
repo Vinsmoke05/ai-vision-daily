@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .models import NewsItem
 
@@ -22,7 +22,7 @@ def build_raw_digest(items: list[NewsItem]) -> str:
 
     sorted_items = sorted(
         items,
-        key=lambda x: x.published or datetime.min,
+        key=lambda x: x.published or datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
     )
 

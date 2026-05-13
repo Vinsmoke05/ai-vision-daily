@@ -59,18 +59,12 @@ class AnthropicScraper(BaseScraper):
                 continue
             seen_urls.add(full_url)
 
-            # Prefer heading text inside the link as the clean title
-            heading = link.select_one("h2, h3, h4, h5, .heading, [class*='title']")
+            heading = link.select_one("h1, h2, h3, h4, h5, [class*='title'], [class*='heading']")
             title = heading.get_text(strip=True) if heading else ""
-
             full_text = link.get_text(" ", strip=True)
-
-            # Parse date from the link context
             published = self._parse_date(full_text)
 
-            # If no heading found, extract title from the concatenated text
             if not title:
-                # Remove date prefix like "May 6, 2026Announcements"
                 title = re.sub(
                     r"^[A-Z][a-z]+\s+\d+,?\s*\d{4}(Announcements|Product|Research|Engineering)?",
                     "", full_text,
@@ -88,7 +82,8 @@ class AnthropicScraper(BaseScraper):
         logger.info("Anthropic news: %d items", len(items))
         return items
 
-    def _parse_date(self, text: str) -> datetime | None:
+    @staticmethod
+    def _parse_date(text: str) -> datetime | None:
         match = re.search(r"([A-Z][a-z]+)\s+(\d+),?\s*(\d{4})", text)
         if not match:
             return None
@@ -110,7 +105,7 @@ class AnthropicScraper(BaseScraper):
 
         soup = BeautifulSoup(resp.text, "lxml")
         items: list[NewsItem] = []
-        now = datetime.now(timezone.utc)
+        seen_dates: set[str] = set()
 
         for heading in soup.select("h2, h3"):
             text = heading.get_text(strip=True)
@@ -121,10 +116,16 @@ class AnthropicScraper(BaseScraper):
             month = MONTH_MAP.get(date_match.group(1).lower()[:3])
             if not month:
                 continue
+
+            date_key = f"{date_match.group(3)}-{month:02d}-{int(date_match.group(2)):02d}"
+            if date_key in seen_dates:
+                continue
+            seen_dates.add(date_key)
+
             try:
                 published = datetime(int(date_match.group(3)), month, int(date_match.group(2)), tzinfo=timezone.utc)
             except ValueError:
-                published = now
+                published = datetime.now(timezone.utc)
 
             content_parts = []
             for sibling in heading.find_next_siblings():
@@ -143,4 +144,4 @@ class AnthropicScraper(BaseScraper):
             ))
 
         logger.info("Anthropic release notes: %d items", len(items))
-        return items
+        return items[:5]  # latest 5 only
