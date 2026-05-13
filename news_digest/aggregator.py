@@ -8,9 +8,12 @@ logger = logging.getLogger("news_digest.aggregator")
 SOURCE_LABELS = {
     "github_trending": "GitHub Trending",
     "reddit": "Reddit",
-    "opencv": "OpenCV",
+    "anthropic": "Anthropic / Claude",
+    "openai": "OpenAI",
     "deepseek": "DeepSeek",
 }
+
+SOURCE_ORDER = ["openai", "anthropic", "deepseek", "github_trending", "reddit"]
 
 
 def build_raw_digest(items: list[NewsItem]) -> str:
@@ -23,13 +26,13 @@ def build_raw_digest(items: list[NewsItem]) -> str:
         reverse=True,
     )
 
-    parts: list[str] = ["# AI 工业视觉日报\n"]
+    parts: list[str] = ["# AI 技术情报日报\n"]
 
     source_groups: dict[str, list[NewsItem]] = {}
     for item in sorted_items:
         source_groups.setdefault(item.source, []).append(item)
 
-    for source_key in ["github_trending", "reddit", "opencv", "deepseek"]:
+    for source_key in SOURCE_ORDER:
         group = source_groups.get(source_key)
         if not group:
             continue

@@ -10,15 +10,15 @@ from ..models import NewsItem
 
 logger = logging.getLogger("news_digest.scrapers.github")
 
-CV_KEYWORDS = {
-    "computer-vision", "deep-learning", "object-detection", "yolo",
-    "ocr", "image-processing", "stable-diffusion", "diffusion",
-    "llm", "large-language-model", "vision", "detection",
-    "segmentation", "face-recognition", "optical-flow",
-    "visual-slam", "3d-vision", "neural-network",
-    "transformer", "attention", "embedding", "clip",
-    "open-vocabulary", "foundation-model", "machine-learning",
-    "robotics", "autonomous", "self-driving",
+AI_KEYWORDS = {
+    "llm", "large-language-model", "gpt", "claude", "agent",
+    "mcp", "model-context-protocol", "ai-coding", "code-generation",
+    "copilot", "function-calling", "tool-use", "prompt-engineering",
+    "rag", "ai-agent", "chatgpt", "openai", "anthropic",
+    "deepseek", "langchain", "ai-tool", "ai-framework",
+    "vector-database", "embedding", "ai-sdk", "ai-api",
+    "autonomous-agent", "multi-agent", "workflow-engine",
+    "ai-assistant", "ai-plugin", "ai-extension",
 }
 
 
@@ -80,4 +80,4 @@ class GitHubTrendingScraper(BaseScraper):
     @staticmethod
     def _is_relevant(description: str, topics: list[str]) -> bool:
         combined = f"{description} {' '.join(topics)}".lower()
-        return any(kw in combined for kw in CV_KEYWORDS)
+        return any(kw in combined for kw in AI_KEYWORDS)

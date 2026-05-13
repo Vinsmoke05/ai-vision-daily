@@ -19,9 +19,11 @@ class Settings(BaseSettings):
     llm_model: str = "deepseek-chat"
 
     # Scraper config
-    gh_trending_languages: list[str] = ["python", "cpp", "jupyter-notebook"]
-    reddit_subreddits: list[str] = ["computervision", "artificial", "MachineLearning"]
-    opencv_check_releases: bool = True
+    gh_trending_languages: list[str] = ["python", "typescript", "rust"]
+    reddit_subreddits: list[str] = [
+        "ClaudeAI", "OpenAI", "LocalLLaMA",
+        "MachineLearning", "artificial",
+    ]
     deepseek_news_url: str = "https://api-docs.deepseek.com/news"
 
     # Paths

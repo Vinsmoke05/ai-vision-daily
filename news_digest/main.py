@@ -6,9 +6,10 @@ from .cache import NewsCache
 from .config import Settings
 from .logger_setup import setup_logging
 from .scrapers import (
+    AnthropicScraper,
     DeepSeekScraper,
     GitHubTrendingScraper,
-    OpenCVScraper,
+    OpenAIScraper,
     RedditScraper,
 )
 
@@ -20,19 +21,20 @@ def main() -> int:
     setup_logging(settings.log_dir)
 
     logger.info("=" * 50)
-    logger.info("Starting AI Vision Daily Digest")
+    logger.info("Starting AI Tech Intelligence Daily Digest")
     logger.info("=" * 50)
 
     scrapers = [
         GitHubTrendingScraper(),
         RedditScraper(),
-        OpenCVScraper(),
+        AnthropicScraper(),
+        OpenAIScraper(),
         DeepSeekScraper(),
     ]
 
     all_items: list = []
 
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=5) as pool:
         fut_to_scraper = {pool.submit(s.scrape, settings): s for s in scrapers}
         for fut in as_completed(fut_to_scraper):
             scraper = fut_to_scraper[fut]

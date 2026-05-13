@@ -10,15 +10,16 @@ from ..models import NewsItem
 
 logger = logging.getLogger("news_digest.scrapers.reddit")
 
-CV_KEYWORDS_LOWER = {
-    "computer vision", "deep learning", "object detection", "yolo",
-    "ocr", "image processing", "stable diffusion", "diffusion model",
-    "llm", "vision transformer", "segmentation", "detection",
-    "face recognition", "visual slam", "3d vision",
-    "neural network", "opencv", "machine learning",
-    "robotics", "autonomous", "self-driving", "cnn", "transformer",
-    "clip", "open vocabulary", "foundation model", "slam",
-    "depth estimation", "nerf", "gaussian splatting",
+AI_KEYWORDS_LOWER = {
+    "claude", "anthropic", "openai", "gpt", "chatgpt", "gpt-5",
+    "o1", "o3", "deepseek", "llm", "large language model",
+    "agent", "ai agent", "mcp", "model context protocol",
+    "function calling", "tool use", "prompt engineering",
+    "rag", "retrieval augmented generation", "context window",
+    "ai coding", "code generation", "copilot", "cursor",
+    "langchain", "ai sdk", "api pricing", "token pricing",
+    "reasoning model", "chain of thought", "machine learning",
+    "fine-tuning", "embedding", "vector database",
 }
 
 
@@ -65,7 +66,7 @@ class RedditScraper(BaseScraper):
             created = post.get("created_utc", 0)
 
             combined = f"{title} {selftext}".lower()
-            if not any(kw in combined for kw in CV_KEYWORDS_LOWER):
+            if not any(kw in combined for kw in AI_KEYWORDS_LOWER):
                 continue
             if score < 5:
                 continue
