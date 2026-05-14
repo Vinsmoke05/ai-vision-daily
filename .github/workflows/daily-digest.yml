@@ -1,10 +1,8 @@
 name: AI Vision Daily Digest
 
 on:
-  schedule:
-    # 每天 UTC 0:00 = 北京时间 08:00
-    - cron: "5 1 * * *"
-  # 支持手动触发测试
+  # 已迁移到 Windows 本地计划任务 (schtasks)，每天 09:35
+  # 保留 workflow_dispatch 以便手动触发测试
   workflow_dispatch:
 
 jobs:
